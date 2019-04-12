@@ -5,6 +5,7 @@ spring:
     active:
       default
 
+#callback configuration - used by the protected resource to call back to the OAth2 service to see if the token is valid
 #security:
 #  oauth2:
 #   resource:

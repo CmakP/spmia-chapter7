@@ -53,14 +53,16 @@ public class TrackingFilter extends ZuulFilter{
     private String getOrganizationId(){
 
         String result="";
-        if (filterUtils.getAuthToken()!=null){
+        if (filterUtils.getAuthToken() != null) {
 
+            logger.debug("### zuulsvr.TrackingFilter.TrackingFilter.getOrganizationId() - AuthToken: {}", filterUtils.getAuthToken());
+            // Parse out the token out of the Authorization HTTP header
             String authToken = filterUtils.getAuthToken().replace("Bearer ","");
             try {
-                Claims claims = Jwts.parser()
-                        .setSigningKey(serviceConfig.getJwtSigningKey().getBytes("UTF-8"))
+                Claims claims = Jwts.parser()   //Use JWTS class to parse out the token,
+                        .setSigningKey(serviceConfig.getJwtSigningKey().getBytes("UTF-8"))  //passing in the signing key used to sign the token
                         .parseClaimsJws(authToken).getBody();
-                result = (String) claims.get("organizationId");
+                result = (String) claims.get("organizationId");  // Pull the organizationId out of the JavaScript token
             }
             catch (Exception e){
                 e.printStackTrace();
@@ -74,16 +76,17 @@ public class TrackingFilter extends ZuulFilter{
         RequestContext ctx = RequestContext.getCurrentContext();
 
         if (isCorrelationIdPresent()) {
-            logger.debug("tmx-correlation-id found in tracking filter: {}. ", filterUtils.getCorrelationId());
+            logger.debug("### zuul.TrackingFilter.run() - tmx-correlation-id found in tracking filter: {}", filterUtils.getCorrelationId());
         }
         else{
             filterUtils.setCorrelationId(generateCorrelationId());
-            logger.debug("tmx-correlation-id generated in tracking filter: {}.", filterUtils.getCorrelationId());
+            logger.debug("### zuul.TrackingFilter.run() - tmx-correlation-id generated in tracking filter: {}", filterUtils.getCorrelationId());
         }
 
-        System.out.println("The organization id from the token is : " + getOrganizationId());
+//        System.out.println("zuulsvr.TrackingFilter.run() - The organization id from the token is : " + getOrganizationId());
+        logger.debug("### zuulsvr.TrackingFilter.run() - The organization id from the token is : {}",  getOrganizationId());
         filterUtils.setOrgId(getOrganizationId());
-        logger.debug("Processing incoming request for {}.",  ctx.getRequest().getRequestURI());
+        logger.debug("### zuulsvr.TrackingFilter.run() - Processing incoming request for {}",  ctx.getRequest().getRequestURI());
         return null;
     }
 }

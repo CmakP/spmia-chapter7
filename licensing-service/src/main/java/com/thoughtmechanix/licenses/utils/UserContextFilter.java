@@ -21,16 +21,17 @@ public class UserContextFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
             throws IOException, ServletException {
 
+        logger.debug("### licenses.UserContextFilter.doFilter() - HIT");
 
         HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
-
-        logger.debug("I am entering the licensing service id with auth token: ", httpServletRequest.getHeader("Authorization"));
-
 
         UserContextHolder.getContext().setCorrelationId(httpServletRequest.getHeader(UserContext.CORRELATION_ID));
         UserContextHolder.getContext().setUserId(httpServletRequest.getHeader(UserContext.USER_ID));
         UserContextHolder.getContext().setAuthToken(httpServletRequest.getHeader(UserContext.AUTH_TOKEN));
         UserContextHolder.getContext().setOrgId(httpServletRequest.getHeader(UserContext.ORG_ID));
+
+        logger.debug("### licenses.UserContextFilter.doFilter() - License Service Incoming Correlation id: {}", UserContextHolder.getContext().getCorrelationId());
+        logger.debug("### licenses.UserContextFilter.doFilter() - from httpServletRequest Incoming AUTH_TOKEN: {}", httpServletRequest.getHeader(UserContext.AUTH_TOKEN));
 
         filterChain.doFilter(httpServletRequest, servletResponse);
     }

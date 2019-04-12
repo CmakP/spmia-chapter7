@@ -1,6 +1,5 @@
 package com.thoughtmechanix.zuulsvr.filters;
 
-
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import com.thoughtmechanix.zuulsvr.model.UserInfo;
@@ -21,7 +20,6 @@ public class AuthenticationFilter extends ZuulFilter {
     private static final int FILTER_ORDER =  2;
     private static final boolean  SHOULD_FILTER=false;
     private static final Logger logger = LoggerFactory.getLogger(AuthenticationFilter.class);
-
 
     @Autowired
     FilterUtils filterUtils;
@@ -54,6 +52,7 @@ public class AuthenticationFilter extends ZuulFilter {
 
     private UserInfo isAuthTokenValid(){
         ResponseEntity<UserInfo> restExchange = null;
+        logger.debug("zuulsvr.AuthenticationFilter.isAuthTokenValid() - HIT");
         try {
             restExchange =
                     restTemplate.exchange(
@@ -76,31 +75,33 @@ public class AuthenticationFilter extends ZuulFilter {
     @Override
     public Object run() {
         RequestContext ctx = RequestContext.getCurrentContext();
+        logger.info("zuulsvr.AuthenticationFilter.run() - getRequestURI: {}", ctx.getRequest().getRequestURI());
 
         //If we are dealing with a call to the authentication service, let the call go through without authenticating
-        if ( ctx.getRequest().getRequestURI().equals("/api/authenticationservice/v1/authenticate")){
+        if ( ctx.getRequest().getRequestURI().equals("/api/authenticationservice/v1/authenticate")) {
+            logger.info("zuulsvr.AuthenticationFilter.run() - Letting the call to authentication service go through without authenticating");
             return null;
         }
 
-        if (isAuthTokenPresent()){
-           logger.debug("Authentication token is present.");
-        }else{
-           logger.debug("Authentication token is not present.");
+        if (isAuthTokenPresent()) {
+           logger.info("zuulsvr.AuthenticationFilter.run() - Authentication token is present.");
+        } else {
+           logger.info("zuulsvr.AuthenticationFilter.run() - Authentication token is not present.");
 
            ctx.setResponseStatusCode(HttpStatus.UNAUTHORIZED.value());
            ctx.setSendZuulResponse(false);
         }
 
         UserInfo userInfo = isAuthTokenValid();
-        if (userInfo!=null){
+        if (userInfo != null) {
             filterUtils.setUserId(userInfo.getUserId());
             filterUtils.setOrgId(userInfo.getOrganizationId());
 
-            logger.debug("Authentication token is valid.");
+            logger.info("zuulsvr.AuthenticationFilter.run() - userInfo NOT null -> Authentication token is valid.");
             return null;
         }
 
-        logger.debug("Authentication token is not valid.");
+        logger.info("zuulsvr.AuthenticationFilter.run() - userInfo is null -> Authentication token is not valid.");
         ctx.setResponseStatusCode(HttpStatus.UNAUTHORIZED.value());
         ctx.setSendZuulResponse(false);
 

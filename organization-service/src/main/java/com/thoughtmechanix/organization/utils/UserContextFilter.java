@@ -1,6 +1,5 @@
 package com.thoughtmechanix.organization.utils;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -16,7 +15,9 @@ import java.io.IOException;
 
 @Component
 public class UserContextFilter implements Filter {
+
     private static final Logger logger = LoggerFactory.getLogger(UserContextFilter.class);
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
 
@@ -26,23 +27,23 @@ public class UserContextFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
             throws IOException, ServletException {
 
-
-        logger.debug("Entering the UserContextFilter for the organization service");
+//        logger.debug("Entering the UserContextFilter for the organization service");
         HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
-        System.out.println("**** I am entering the organization service id with auth token: " + httpServletRequest.getHeader("Authorization"));
+//        System.out.println("**** I am entering the organization service id with auth token: " + httpServletRequest.getHeader("Authorization"));
+        logger.debug("### organization.UserContextFilter.doFilter() - from httpServletRequest Incoming AUTH_TOKEN: {}", httpServletRequest.getHeader(UserContext.AUTH_TOKEN));
 
         String correlationId = httpServletRequest.getHeader(UserContext.CORRELATION_ID);
         String userId = httpServletRequest.getHeader(UserContext.USER_ID);
         String authToken = httpServletRequest.getHeader(UserContext.AUTH_TOKEN);
         String orgId = httpServletRequest.getHeader(UserContext.ORG_ID);
 
-
         UserContextHolder.getContext().setCorrelationId(correlationId);
         UserContextHolder.getContext().setUserId(userId);
         UserContextHolder.getContext().setAuthToken(authToken);
         UserContextHolder.getContext().setOrgId(orgId);
 
-        logger.debug("Exiting the UserContextFilter");
+        logger.debug("### organization.UserContextFilter.doFilter() - Incoming Correlation id: {}", UserContextHolder.getContext().getCorrelationId());
+//        logger.debug("Exiting the UserContextFilter");
         filterChain.doFilter(httpServletRequest, servletResponse);
     }
 

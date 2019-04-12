@@ -29,7 +29,8 @@ public class UserContextFilter implements Filter {
         UserContextHolder.getContext().setAuthToken(httpServletRequest.getHeader(UserContext.AUTH_TOKEN));
         UserContextHolder.getContext().setOrgId(httpServletRequest.getHeader(UserContext.ORG_ID));
 
-        logger.debug("License Service Incoming Correlation id: {}", UserContextHolder.getContext().getCorrelationId());
+        logger.debug("### authentication.UserContextFilter.doFilter() - Incoming Correlation id: {}", UserContextHolder.getContext().getCorrelationId());
+        logger.debug("### authentication.UserContextFilter.doFilter() - from httpServletRequest Incoming AUTH_TOKEN: {}", httpServletRequest.getHeader(UserContext.AUTH_TOKEN));
 
         filterChain.doFilter(httpServletRequest, servletResponse);
     }

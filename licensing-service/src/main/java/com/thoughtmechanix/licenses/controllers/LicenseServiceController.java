@@ -31,17 +31,16 @@ public class LicenseServiceController {
 
     private static final Logger logger = LoggerFactory.getLogger(LicenseServiceController.class);
 
-
     @RequestMapping(value="/",method = RequestMethod.GET)
     public List<License> getLicenses( @PathVariable("organizationId") String organizationId) {
-
+        logger.debug("### v1/organizations/{organizationId}/licenses/ - HIT");
         return licenseService.getLicensesByOrg(organizationId);
     }
 
     @RequestMapping(value="/{licenseId}",method = RequestMethod.GET)
     public License getLicenses( @PathVariable("organizationId") String organizationId,
                                 @PathVariable("licenseId") String licenseId) {
-        logger.debug("Entering the license-service-controller");
+        logger.debug("### v1/organizations/{organizationId}/licenses/{licenseId} - HIT");
         logger.debug("Found tmx-correlation-id in license-service-controller: {} ", request.getHeader("tmx-correlation-id"));
         return licenseService.getLicense(organizationId, licenseId);
     }

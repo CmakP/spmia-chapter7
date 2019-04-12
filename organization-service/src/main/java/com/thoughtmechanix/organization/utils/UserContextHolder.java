@@ -1,6 +1,5 @@
 package com.thoughtmechanix.organization.utils;
 
-
 import org.springframework.util.Assert;
 
 public class UserContextHolder {
