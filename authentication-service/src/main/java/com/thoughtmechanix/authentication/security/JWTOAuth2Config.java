@@ -60,6 +60,15 @@ public class JWTOAuth2Config extends AuthorizationServerConfigurerAdapter {
                 .tokenEnhancer(tokenEnhancerChain)                   //Hook your token enhancer chain to the endpoints parameter passed into the configure() call
                 .authenticationManager(authenticationManager)        //used to configure the /auth/oauth/token
                 .userDetailsService(userDetailsService);             //and /auth/user endpoints
+        /**
+           IMPORTANT
+           You need to provide the OAuth2 server a mechanism to authenticate users and return the user information about
+           the authenticating user.
+           This is done by defining two beans in your Spring WebSecurityConfigurerAdapter implementation:
+           authenticationManagerBean() and userDetailsServiceBean().
+           These two beans are exposed by using the default authentication authenticationManagerBean() and
+           userDetailsServiceBean() methods from the parent WebSecurityConfigurerAdapter class.
+         */
     }
 
     // This defines which clients are going to registered your service
