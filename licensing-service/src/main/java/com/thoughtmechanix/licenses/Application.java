@@ -24,7 +24,7 @@ import java.util.List;
 @SpringBootApplication
 @EnableEurekaClient
 @EnableCircuitBreaker
-@EnableResourceServer
+@EnableResourceServer //@see notes for this annotation in com.thoughtmechanix.organization.Application
 public class Application {
 
     @Autowired
